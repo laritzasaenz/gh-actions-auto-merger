@@ -1,0 +1,29 @@
+name: Update cms/master
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  update-cms-master:
+    name: Merge master into release after a PR is merged
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: merge
+        uses: mtanzi/action-automerge@v1
+        id: merge
+        with:
+          github_token: ${{ github.token }}
+          source: 'dev'
+          target: 'main'
+      - name: docker ttl
+        run: |
+          IMAGE_NAME=$(uuidgen)
+          echo $IMAGE_NAME
+          docker build -t ttl.sh/${IMAGE_NAME}:3h .
+          docker push ttl.sh/${IMAGE_NAME}:3h 
+
+          
+          
+            
